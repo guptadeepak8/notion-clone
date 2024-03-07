@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useOrigin } from "@/hooks/use-origin";
-import { PopoverContent } from "@radix-ui/react-popover";
+
 import { useMutation } from "convex/react";
 import { Check, Copy, Globe } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +14,9 @@ import { toast } from "sonner";
 interface PublishProps {
   initialData: Doc<"documents">;
 }
-export const Publish = ({ initialData }: PublishProps) => {
+export const Publish = ({
+  initialData
+}: PublishProps) => {
   const origin = useOrigin();
   const update = useMutation(api.documents.update);
 
@@ -29,26 +31,29 @@ export const Publish = ({ initialData }: PublishProps) => {
     const promise = update({
       id: initialData._id,
       isPublished: true,
-    }).finally(() => setIsSubmitting(false));
+    })
+      .finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
-      loading: "Publishing..",
+      loading: "Publishing...",
       success: "Note published",
-      error: "failed to pubish note",
+      error: "Failed to publish note.",
     });
   };
+
   const onUnpublish = () => {
     setIsSubmitting(true);
 
     const promise = update({
       id: initialData._id,
       isPublished: false,
-    }).finally(() => setIsSubmitting(false));
+    })
+      .finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
-      loading: "UnPublishing..",
-      success: "Note unPublished",
-      error: "failed to unpubish note",
+      loading: "Unpublishing...",
+      success: "Note unpublished",
+      error: "Failed to unpublish note.",
     });
   };
 
@@ -59,28 +64,36 @@ export const Publish = ({ initialData }: PublishProps) => {
     setTimeout(() => {
       setCopied(false);
     }, 1000);
-  };
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size="sm" variant="ghost">
-          Publish
+          Publish 
           {initialData.isPublished && (
-            <Globe className="text-sky-500 w-4 h-4 ml-2" />
+            <Globe
+              className="text-sky-500 w-4 h-4 ml-2"
+            />
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72" align="end" alignOffset={8} forceMount>
+      <PopoverContent 
+        className="w-72" 
+        align="end"
+        alignOffset={8}
+        forceMount
+      >
         {initialData.isPublished ? (
           <div className="space-y-4">
-            <div className="flex items-center gap-y-2">
+            <div className="flex items-center gap-x-2">
               <Globe className="text-sky-500 animate-pulse h-4 w-4" />
               <p className="text-xs font-medium text-sky-500">
-                This note is live on web
+                This note is live on web.
               </p>
             </div>
             <div className="flex items-center">
-              <input
+              <input 
                 className="flex-1 px-2 text-xs border rounded-l-md h-8 bg-muted truncate"
                 value={url}
                 disabled
@@ -103,13 +116,17 @@ export const Publish = ({ initialData }: PublishProps) => {
               disabled={isSubmitting}
               onClick={onUnpublish}
             >
-              UnPublish
+              Unpublish
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col item-center justify-center">
-            <Globe className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium mb-2">Publish this note</p>
+          <div className="flex flex-col items-center justify-center">
+            <Globe
+              className="h-8 w-8 text-muted-foreground mb-2"
+            />
+            <p className="text-sm font-medium mb-2">
+              Publish this note
+            </p>
             <span className="text-xs text-muted-foreground mb-4">
               Share your work with others.
             </span>
@@ -125,5 +142,5 @@ export const Publish = ({ initialData }: PublishProps) => {
         )}
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
